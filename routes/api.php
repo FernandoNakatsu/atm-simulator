@@ -19,3 +19,8 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('', ['uses' => 'User\UserController@delete']);
     Route::get('', ['uses' => 'User\UserController@search']);
 });
+
+Route::group(['prefix' => 'account-bank'], function () {
+    Route::post('', ['uses' => 'AccountBank\AccountBankController@create']);
+    Route::delete('', ['uses' => 'AccountBank\AccountBankController@delete']);
+});
