@@ -6,18 +6,12 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class AccountBankType extends Model
 {
-	protected $table = 'user';
-
-	protected $dates = [
-		'birthdate'
-	];
+	protected $table = 'account_bank_type';
 
 	protected $fillable = [
-		'fullname',
-		'birthdate',
-		'cpf'
+		'description'
 	];
 
 	public function account_banks()
