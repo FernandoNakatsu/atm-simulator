@@ -17,7 +17,7 @@ class AccountBankController extends Controller
             $accountBank->balance = 0;
             $accountBank->save();
 
-            return response()->json(['Account Bank created successfully'], 200);
+            return response()->json(['Account Bank created successfully'], 201);
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }

@@ -17,7 +17,7 @@ class UserController extends Controller
             $user->cpf = $request->cpf;
             $user->save();
 
-            return response()->json(['User created successfully'], 200);
+            return response()->json(['User created successfully'], 201);
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }

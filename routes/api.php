@@ -24,3 +24,8 @@ Route::group(['prefix' => 'account-bank'], function () {
     Route::post('', ['uses' => 'AccountBank\AccountBankController@create']);
     Route::delete('', ['uses' => 'AccountBank\AccountBankController@delete']);
 });
+
+Route::group(['prefix' => 'atm-simulator'], function () {
+    Route::post('withdraw', ['uses' => 'AtmSimulator\AtmSimulatorController@withdraw']);
+    Route::post('deposit', ['uses' => 'AtmSimulator\AtmSimulatorController@deposit']);
+});
