@@ -13,7 +13,7 @@ class AccountBankController extends Controller
         try {
             $accountBank = new AccountBank;
             $accountBank->user_id = $request->user_id;
-            $accountBank->account_bank_type = $request->account_bank_type;
+            $accountBank->account_bank_type_id = $request->account_bank_type_id;
             $accountBank->balance = 0;
             $accountBank->save();
 

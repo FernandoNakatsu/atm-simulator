@@ -37,6 +37,8 @@ class AtmSimulatorController extends Controller
                     return response()->json(['Insufficient balance to make the desired withdrawal'], 200);
                 } else {
                     #TODO
+                    $bankNotes = MoneyNote::all()->pluck('value')->toArray();
+                    dd($bankNotes);
                     return response()->json(['Withdrawal was successful'], 200);
                 }
             }
