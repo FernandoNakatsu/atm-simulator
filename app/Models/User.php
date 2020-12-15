@@ -10,8 +10,12 @@ class User extends Model
 {
 	protected $table = 'user';
 
+	protected $casts = [
+		'birthdate' => 'date:Y-m-d',
+	];
+
 	protected $dates = [
-		'birthdate'
+		'birthdate' => 'date:Y-m-d',
 	];
 
 	protected $fillable = [

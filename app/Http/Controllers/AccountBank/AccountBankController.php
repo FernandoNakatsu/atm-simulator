@@ -17,7 +17,15 @@ class AccountBankController extends Controller
             $accountBank->balance = 0;
             $accountBank->save();
 
-            return response()->json(['Account Bank created successfully'], 201);
+            return response()->json(
+                [
+                    'message' => 'Success.',
+                    'data' => [
+                        'account_bank_id' => $accountBank->id,
+                        'balance' => $accountBank->balance,
+                    ],
+                ]
+            ); 
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
@@ -26,8 +34,13 @@ class AccountBankController extends Controller
     public function delete(Request $request)
     {
         try {
-            User::find($request->id)->delete();
-            return response()->json(['Account Bank deleted successfully'], 200);
+            $accountBank = AccountBank::find($request->account_bank_id);
+            if ($accountBank) {
+                AccountBank::find($request->account_bank_id)->delete();
+                return response()->json(['Account Bank deleted successfully'], 200);
+            } else {
+                return response()->json(['Account Bank not found'], 404);
+            }
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }

@@ -17,7 +17,16 @@ class UserController extends Controller
             $user->cpf = $request->cpf;
             $user->save();
 
-            return response()->json(['User created successfully'], 201);
+            return response()->json(
+                [
+                    'message' => 'Success.',
+                    'data' => [
+                        'fullname' => $user->fullname,
+                        'birthdate' => $user->birthdate->format('Y-m-d'),
+                        'cpf' => $user->cpf,
+                    ],
+                ]
+            );            
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
@@ -32,7 +41,16 @@ class UserController extends Controller
             $user->cpf = $request->cpf;
             $user->save();
 
-            return response()->json(['User updated successfully'], 200);
+            return response()->json(
+                [
+                    'message' => 'Success.',
+                    'data' => [
+                        'fullname' => $user->fullname,
+                        'birthdate' => $user->birthdate->format('Y-m-d'),
+                        'cpf' => $user->cpf,
+                    ],
+                ]
+            );    
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
@@ -50,14 +68,23 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $searchString = mb_strtolower($request->get('search'));
-        $result = User::whereRaw("
-            lower(fullname) LIKE '%{$searchString}%' OR
-            lower(birthdate) LIKE '%{$searchString}%' OR
-            lower(cpf) LIKE '%{$searchString}%'
-        ")
-        ->get();
+        if ($request->get('search')) {
+            $searchString = mb_strtolower($request->get('search'));
+            $result = User::whereRaw("
+                lower(fullname) LIKE '%{$searchString}%' OR
+                lower(birthdate) LIKE '%{$searchString}%' OR
+                lower(cpf) LIKE '%{$searchString}%'
+            ")
+            ->get();
+        } else {
+            $result = User::all();
+        }
 
-        return response()->json($result, 200);
+        return response()->json(
+            [
+                'message' => 'Success.',
+                'data' => $result,
+            ]
+        ); 
     }
 }
