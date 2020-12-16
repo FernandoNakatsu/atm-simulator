@@ -2,54 +2,83 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\User;
+use Tests\TestCase;
 
 /**
  * /user
  */
 class UserTest extends TestCase
 {
-    public function testListUsersTest()
+    public function testCreateUserTest()
     {
         // Set
-        $expectedResult = User::all();
+        $data = [
+            "fullname" => "João Teste",
+            "birthdate" => "2000-01-01",
+            "cpf" => "111.111.111-11"
+        ];
+        $responseBody = ['User created successfully'];
 
         // Actions
-        $response = $this->getJson("/api/user");
+        $response = $this->postJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(201);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
+    public function testUpdateUserTest()
+    {
+        // Set
+        $user = User::first();
+        $data = [
+            "user_id" => $user->id,
+            "fullname" => "João Teste Updated",
+            "birthdate" => "2000-02-02",
+            "cpf" => "222.222.222-22"
+        ];
+        $responseBody = ['User updated successfully'];
+
+        // Actions
+        $response = $this->putJson("/api/user", $data);
 
         // Assertions
         $response->assertStatus(200);
-        $responseBody = [
-            'message' => 'Success.',
-            'data' => $expectedResult,
-        ];
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
 
+    public function testDeleteUserTest()
+    {
+        // Set
+        $user = User::first();
+        $data = ["user_id" => $user->id];
+        $responseBody = ['User deleted successfully'];
+
+        // Actions
+        $response = $this->deleteJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(200);
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
     public function testSearchUserTest()
     {
         // Set
-        $search = "111.111.111-11";
+        $search = "João Teste";
         $searchString = mb_strtolower($search);
-        $expectedResult = User::whereRaw("
-            lower(fullname) LIKE '%{$searchString}%' OR
-            lower(birthdate) LIKE '%{$searchString}%' OR
-            lower(cpf) LIKE '%{$searchString}%'
-        ")
-        ->get();
+        $expectedResult = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
+        $responseBody = [
+            'message' => 'Success.',
+            'data' => $expectedResult,
+        ];
 
         // Actions
         $response = $this->getJson("/api/user/{$search}");
 
         // Assertions
         $response->assertStatus(200);
-        $responseBody = [
-            'message' => 'Success.',
-            'data' => $expectedResult,
-        ];
-
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 }

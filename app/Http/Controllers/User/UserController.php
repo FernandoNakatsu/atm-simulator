@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\User;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -17,16 +17,7 @@ class UserController extends Controller
             $user->cpf = $request->cpf;
             $user->save();
 
-            return response()->json(
-                [
-                    'message' => 'Success.',
-                    'data' => [
-                        'fullname' => $user->fullname,
-                        'birthdate' => $user->birthdate->format('Y-m-d'),
-                        'cpf' => $user->cpf,
-                    ],
-                ]
-            );            
+            return response()->json(['User created successfully'], 201);            
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
@@ -35,22 +26,13 @@ class UserController extends Controller
     public function update(Request $request)
     {
         try {
-            $user = User::find($request->id);
+            $user = User::find($request->user_id);
             $user->fullname = $request->fullname;
             $user->birthdate = $request->birthdate;
             $user->cpf = $request->cpf;
             $user->save();
 
-            return response()->json(
-                [
-                    'message' => 'Success.',
-                    'data' => [
-                        'fullname' => $user->fullname,
-                        'birthdate' => $user->birthdate->format('Y-m-d'),
-                        'cpf' => $user->cpf,
-                    ],
-                ]
-            );    
+            return response()->json(['User updated successfully'], 200);    
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
@@ -59,26 +41,22 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         try {
-            User::find($request->id)->delete();
-            return response()->json(['User deleted successfully'], 200);
+            $user = User::find($request->user_id);
+            if ($user) {
+                $user->delete();
+                return response()->json(['User deleted successfully'], 200);
+            } else {
+                return response()->json(['User not found'], 404);
+            }
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
         }
     }
 
-    public function search(Request $request)
+    public function search($search)
     {
-        if ($request->get('search')) {
-            $searchString = mb_strtolower($request->get('search'));
-            $result = User::whereRaw("
-                lower(fullname) LIKE '%{$searchString}%' OR
-                lower(birthdate) LIKE '%{$searchString}%' OR
-                lower(cpf) LIKE '%{$searchString}%'
-            ")
-            ->get();
-        } else {
-            $result = User::all();
-        }
+        $searchString = mb_strtolower($search);
+        $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
 
         return response()->json(
             [
