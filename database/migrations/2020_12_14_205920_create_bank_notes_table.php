@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMoneyNotesTable extends Migration
+class CreateBankNotesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +14,14 @@ class CreateMoneyNotesTable extends Migration
      */
     public function up()
     {
-        Schema::create('money_notes', function (Blueprint $table) {
+        Schema::create('bank_notes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('description');
             $table->integer('value');
             $table->timestamps();
         });
 
-        DB::table('money_notes')->insert([
+        DB::table('bank_notes')->insert([
             "id" => 1,
             "description" => "Nota de 20",
             "value" => 20,
@@ -29,7 +29,7 @@ class CreateMoneyNotesTable extends Migration
             "updated_at" => Carbon::now()
         ]);
 
-        DB::table('money_notes')->insert([
+        DB::table('bank_notes')->insert([
             "id" => 2,
             "description" => "Nota de 50",
             "value" => 50,
@@ -37,7 +37,7 @@ class CreateMoneyNotesTable extends Migration
             "updated_at" => Carbon::now()
         ]);
 
-        DB::table('money_notes')->insert([
+        DB::table('bank_notes')->insert([
             "id" => 3,
             "description" => "Nota de 100",
             "value" => 100,
@@ -53,6 +53,6 @@ class CreateMoneyNotesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('money_notes');
+        Schema::dropIfExists('bank_notes');
     }
 }

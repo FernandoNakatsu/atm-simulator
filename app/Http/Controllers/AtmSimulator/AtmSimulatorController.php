@@ -4,7 +4,7 @@ namespace App\Http\Controllers\AtmSimulator;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\{AccountBank,MoneyNote};
+use App\Models\{AccountBank,BankNote};
 
 class AtmSimulatorController extends Controller
 {
@@ -37,7 +37,7 @@ class AtmSimulatorController extends Controller
                     return response()->json(['Insufficient balance to make the desired withdrawal'], 200);
                 } else {
                     $withdraw_value = $request->value;
-                    $bankNotes = MoneyNote::all()->sortByDesc('value')->pluck('value')->toArray();
+                    $bankNotes = BankNote::all()->sortByDesc('value')->pluck('value')->toArray();
                     $lowestBankNote = min($bankNotes);
                     $amountBankNotes = array();
                     foreach ($bankNotes as $i => $bn) {
