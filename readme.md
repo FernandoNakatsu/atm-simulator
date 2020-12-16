@@ -23,7 +23,11 @@ Sendo elas:
 - O usuário poderá fazer depósito de qualquer valor em sua conta, exceto centavos.
 - O usuário poderá fazer saque de sua conta apenas utilizando as notas de 20, 50 ou 100.
 
-As técnologias utilizados nesse projeto foram [PHP 7.2](https://www.php.net/releases/7_2_0.php), [Laravel 5.8](https://laravel.com/docs/5.8/), [MYSQL 5.7](https://dev.mysql.com/doc/refman/5.7/en/) e [Docker](https://phpdocker.io/).
+As tecnologias utilizados nesse projeto foram:
+- [PHP 7.2](https://www.php.net/releases/7_2_0.php)
+- [Laravel 5.8](https://laravel.com/docs/5.8/)
+- [MYSQL 5.7](https://dev.mysql.com/doc/refman/5.7/en/)
+- [Docker](https://phpdocker.io/).
 
 ## Começando
 
