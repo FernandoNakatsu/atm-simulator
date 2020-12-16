@@ -26,7 +26,7 @@ class UserController extends Controller
         $user->cpf = $request->cpf;
         $user->save();
 
-        return response()->json(['User created successfully'], 201);  
+        return response()->json(["User created successfully."], 201);  
     }
 
     public function update(Request $request)
@@ -76,7 +76,7 @@ class UserController extends Controller
         if ($user) {
             $user->delete();
 
-            return response()->json(['User deleted successfully'], 200);
+            return response()->json(["User deleted successfully."], 200);
         } else {
             return response()->json(["errors" => ["User not found."]], 404);
         }

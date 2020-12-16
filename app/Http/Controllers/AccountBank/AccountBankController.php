@@ -27,7 +27,7 @@ class AccountBankController extends Controller
         )->first();
 
         if ($accountBank) {
-            return response()->json(['Bank account already exists for this user'], 403); 
+            return response()->json(["Account Bank already exists for this user."], 403); 
         }
 
         $accountBank = new AccountBank;
@@ -36,6 +36,6 @@ class AccountBankController extends Controller
         $accountBank->balance = 0;
         $accountBank->save();
 
-        return response()->json(['Account Bank created successfully'], 201); 
+        return response()->json(["Account Bank created successfully."], 201); 
     }
 }

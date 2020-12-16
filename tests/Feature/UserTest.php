@@ -16,9 +16,9 @@ class UserTest extends TestCase
         $data = [
             "fullname" => "João Teste",
             "birthday" => "2000-01-01",
-            "cpf" => "111.111.111-11"
+            "cpf" => "111.111.111-11",
         ];
-        $responseBody = ['User created successfully'];
+        $responseBody = ["User created successfully."];
 
         // Actions
         $response = $this->postJson("/api/user", $data);
@@ -33,7 +33,7 @@ class UserTest extends TestCase
         // Set
         $data = [
             "birthday" => "2000-01-01",
-            "cpf" => "111.111.111-11"
+            "cpf" => "111.111.111-11",
         ];
         $responseBody = ["errors" => ["The fullname field is required."]];
 
@@ -104,7 +104,7 @@ class UserTest extends TestCase
         // Set
         $user = User::first();
         $data = ["user_id" => $user->id];
-        $responseBody = ['User deleted successfully'];
+        $responseBody = ["User deleted successfully."];
 
         // Actions
         $response = $this->deleteJson("/api/user", $data);
