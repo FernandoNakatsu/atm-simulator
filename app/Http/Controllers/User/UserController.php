@@ -20,17 +20,13 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $user = new User;
-            $user->fullname = $request->fullname;
-            $user->birthdate = $request->birthdate;
-            $user->cpf = $request->cpf;
-            $user->save();
+        $user = new User;
+        $user->fullname = $request->fullname;
+        $user->birthdate = $request->birthdate;
+        $user->cpf = $request->cpf;
+        $user->save();
 
-            return response()->json(['User created successfully'], 201);            
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
-        }
+        return response()->json(['User created successfully'], 201);  
     }
 
     public function update(Request $request)
@@ -46,29 +42,25 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $user = User::find($request->user_id);
-            if ($user) {
-                if ($request->filled('name')) {
-                    $user->fullname = $request->fullname;
-                }
-
-                if ($request->filled('birthdate')) {
-                    $user->birthdate = $request->birthdate;
-                }
-
-                if ($request->filled('cpf')) {
-                    $user->cpf = $request->cpf;
-                }
-                
-                $user->save();
-
-                return response()->json(['User updated successfully'], 200);
-            } else {
-                return response()->json(["errors" => ["User not found."]], 404);
+        $user = User::find($request->user_id);
+        if ($user) {
+            if ($request->filled('name')) {
+                $user->fullname = $request->fullname;
             }
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
+
+            if ($request->filled('birthdate')) {
+                $user->birthdate = $request->birthdate;
+            }
+
+            if ($request->filled('cpf')) {
+                $user->cpf = $request->cpf;
+            }
+            
+            $user->save();
+
+            return response()->json(['User updated successfully'], 200);
+        } else {
+            return response()->json(["errors" => ["User not found."]], 404);
         }
     }
 
@@ -80,34 +72,26 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $user = User::find($request->user_id);
-            if ($user) {
-                $user->delete();
+        $user = User::find($request->user_id);
+        if ($user) {
+            $user->delete();
 
-                return response()->json(['User deleted successfully'], 200);
-            } else {
-                return response()->json(["errors" => ["User not found."]], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
+            return response()->json(['User deleted successfully'], 200);
+        } else {
+            return response()->json(["errors" => ["User not found."]], 404);
         }
     }
 
     public function search($search)
     {
-        try {
-            $searchString = mb_strtolower($search);
-            $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
+        $searchString = mb_strtolower($search);
+        $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
 
-            return response()->json(
-                [
-                    'message' => 'Success.',
-                    'data' => $result,
-                ]
-            );
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
-        }
+        return response()->json(
+            [
+                'message' => 'Success.',
+                'data' => $result,
+            ]
+        );
     }
 }
