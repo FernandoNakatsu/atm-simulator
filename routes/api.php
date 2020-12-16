@@ -13,6 +13,17 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::group(['prefix' => 'docs'], function () {
+    Route::get('documentation.yml', function () {
+        return response()->view(
+            'documentation',
+            [],
+            200,
+            ['Content-Type' => 'text/yaml; charset=UTF-8']
+        );
+    });
+});
+
 Route::group(['prefix' => 'user'], function () {
     Route::post('', ['uses' => 'User\UserController@create']);
     Route::put('', ['uses' => 'User\UserController@update']);

@@ -37,7 +37,7 @@ As tecnologias utilizados nesse projeto foram:
 
 Na sua máquina, você só precisa ter o [Docker](https://www.docker.com/get-started) e o [Docker Compose](https://docs.docker.com/compose/) instalados.
 Você pode subir o projeto utilizando o `docker-compose`.
-Garanta que a porta `80` de sua máquina não esteja sendo utilizada e rode o comando abaixo:
+Garanta que a porta `8080` de sua máquina não esteja sendo utilizada e rode o comando abaixo:
 
 ```bash
 docker-compose up -d
