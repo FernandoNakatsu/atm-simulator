@@ -48,6 +48,24 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
+    public function testUpdateUserWithoutUserIdTest()
+    {
+        // Set
+        $data = [
+            "fullname" => "João Teste Updated",
+            "birthdate" => "2000-02-02",
+            "cpf" => "222.222.222-22"
+        ];
+        $responseBody = ["errors" => ["The user id field is required."]];
+
+        // Actions
+        $response = $this->putJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(422);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
     public function testDeleteUserTest()
     {
         // Set
@@ -62,6 +80,21 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
+
+    public function testDeleteUserWithoutUserIdTest()
+    {
+        // Set
+        $data = [];
+        $responseBody = ["errors" => ["The user id field is required."]];
+
+        // Actions
+        $response = $this->deleteJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(422);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
 
     public function testSearchUserTest()
     {

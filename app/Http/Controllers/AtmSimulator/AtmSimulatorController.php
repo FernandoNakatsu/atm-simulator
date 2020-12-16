@@ -17,7 +17,6 @@ class AtmSimulatorController extends Controller
             'value' => 'required|integer'
         ]);
 
-
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }

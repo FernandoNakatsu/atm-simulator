@@ -10,6 +10,16 @@ class UserController extends Controller
 {
     public function create(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'fullname' => 'required|string',
+            'birthdate' => 'required|date_format:Y-m-d',
+            'cpf' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()], 422);
+        }
+
         try {
             $user = new User;
             $user->fullname = $request->fullname;
@@ -25,13 +35,34 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
+        $validator = \Validator::make($request->all(), [
+            'user_id' => 'required|integer',
+            'fullname' => 'nullable|string',
+            'birthdate' => 'nullable|date_format:Y-m-d',
+            'cpf' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()], 422);
+        }
+
         try {
             $user = User::find($request->user_id);
             if ($user) {
-                $user->fullname = $request->fullname;
-                $user->birthdate = $request->birthdate;
-                $user->cpf = $request->cpf;
+                if ($request->filled('name')) {
+                    $user->fullname = $request->fullname;
+                }
+
+                if ($request->filled('birthdate')) {
+                    $user->birthdate = $request->birthdate;
+                }
+
+                if ($request->filled('cpf')) {
+                    $user->cpf = $request->cpf;
+                }
+                
                 $user->save();
+
                 return response()->json(['User updated successfully'], 200);
             } else {
                 return response()->json(['User not found'], 404);
@@ -43,10 +74,17 @@ class UserController extends Controller
 
     public function delete(Request $request)
     {
+        $validator = \Validator::make($request->all(), ['user_id' => 'required|integer']);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()], 422);
+        }
+
         try {
             $user = User::find($request->user_id);
             if ($user) {
                 $user->delete();
+
                 return response()->json(['User deleted successfully'], 200);
             } else {
                 return response()->json(['User not found'], 404);
