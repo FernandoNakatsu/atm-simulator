@@ -27,7 +27,7 @@ As tecnologias utilizados nesse projeto foram:
 - [PHP 7.2](https://www.php.net/releases/7_2_0.php)
 - [Laravel 5.8](https://laravel.com/docs/5.8/)
 - [MYSQL 5.7](https://dev.mysql.com/doc/refman/5.7/en/)
-- [Docker](https://phpdocker.io/).
+- [Docker](https://phpdocker.io/)
 
 ## Começando
 
@@ -49,11 +49,15 @@ Em seguida, será necessário instalar as dependências do projeto:
 docker-compose exec php-fpm composer install
 ```
 
-E por fim, para criar as tabelas necessárias na base de dados, rode o comando abaixo:
+Crie as tabelas necessárias do projeto rodando o comando abaixo:
 
 ```bash
 docker-compose exec php-fpm php artisan migrate
 ```
+
+A partir daqui, está tudo configurado.
+
+Assim, será possível acessar [http://localhost:8080](http://localhost:8080) e ver a documentação da API.
 
 ## Testes
 
