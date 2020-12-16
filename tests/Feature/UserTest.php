@@ -35,7 +35,7 @@ class UserTest extends TestCase
             "birthdate" => "2000-01-01",
             "cpf" => "111.111.111-11"
         ];
-        $responseBody = ["errors":["The fullname field is required."]];
+        $responseBody = ["errors" => ["The fullname field is required."]];
 
         // Actions
         $response = $this->postJson("/api/user", $data);
