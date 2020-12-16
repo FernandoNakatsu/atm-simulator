@@ -19,32 +19,23 @@ class AccountBankController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $accountBank = new AccountBank;
-            $accountBank->user_id = $request->user_id;
-            $accountBank->account_bank_type_id = $request->account_bank_type_id;
-            $accountBank->balance = 0;
-            $accountBank->save();
+        $accountBank = AccountBank::where(
+            [
+                'account_bank_type_id' => $request->$account_bank_type_id,
+                'user_id' => $request->$user_id,
+            ]
+        )->first();
 
-            return response()->json(['Account Bank created successfully'], 201); 
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
+        if ($accountBank) {
+            return response()->json(['Bank account already exists for this user'], 403); 
         }
-    }
 
-    public function delete(Request $request)
-    {
-        try {
-            $accountBank = AccountBank::find($request->account_bank_id);
-            if ($accountBank) {
-                $accountBank->delete();
-                
-                return response()->json(['Account Bank deleted successfully'], 200);
-            } else {
-                return response()->json(['Account Bank not found'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
-        }
+        $accountBank = new AccountBank;
+        $accountBank->user_id = $request->user_id;
+        $accountBank->account_bank_type_id = $request->account_bank_type_id;
+        $accountBank->balance = 0;
+        $accountBank->save();
+
+        return response()->json(['Account Bank created successfully'], 201); 
     }
 }

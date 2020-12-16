@@ -21,73 +21,69 @@ class AtmSimulatorController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $accountBank = AccountBank::where([
-                'id'=> $request->account_bank_id,
-                'account_bank_type_id' => $request->account_bank_type_id,
-                'user_id' => $request->user_id
-            ])
-            ->first();
+        $accountBank = AccountBank::where([
+            'id'=> $request->account_bank_id,
+            'account_bank_type_id' => $request->account_bank_type_id,
+            'user_id' => $request->user_id
+        ])
+        ->first();
 
-            if (!$accountBank) {
-                return response()->json(['Account Bank not found'], 404);
+        if (!$accountBank) {
+            return response()->json(["errors" => ["Account Bank not found."]], 404);
+        } else {
+            if ($request->withdraw_value > $accountBank->balance) {
+                return response()->json(['Insufficient balance to make the desired withdrawal'], 403);
             } else {
-                if ($request->withdraw_value > $accountBank->balance) {
-                    return response()->json(['Insufficient balance to make the desired withdrawal'], 200);
-                } else {
-                    $withdraw_value = $request->value;
-                    $bankNotes = BankNote::all()->sortByDesc('value')->pluck('value')->toArray();
-                    $lowestBankNote = min($bankNotes);
-                    $amountBankNotes = array();
-                    foreach ($bankNotes as $i => $bn) {
-                        $countBankNotes = 0;                  
-                        while (
-                            $bn <= $withdraw_value &&  // Valor de saque for maior ou igual a nota atual
-                            (
-                                count($bankNotes) == $i+1 || // Ser a nota de menor valor
-                                $withdraw_value % $bn == 0 || // O resto da divisão ser igual a ZERO
-                                $withdraw_value % $bn >= $bankNotes[$i+1] // O resto da divisão ser maior ou igual que a próxima nota
-                            )
-                        ) {
-                            if ($withdraw_value < $lowestBankNote) {
-                                break;
-                            }
-
-                            $withdraw_value -= $bn;
-                            $countBankNotes++;
+                $withdraw_value = $request->value;
+                $bankNotes = BankNote::all()->sortByDesc('value')->pluck('value')->toArray();
+                $lowestBankNote = min($bankNotes);
+                $amountBankNotes = array();
+                foreach ($bankNotes as $i => $bn) {
+                    $countBankNotes = 0;                  
+                    while (
+                        $bn <= $withdraw_value &&  // Valor de saque for maior ou igual a nota atual
+                        (
+                            count($bankNotes) == $i+1 || // Ser a nota de menor valor
+                            $withdraw_value % $bn == 0 || // O resto da divisão ser igual a ZERO
+                            $withdraw_value % $bn >= $bankNotes[$i+1] // O resto da divisão ser maior ou igual que a próxima nota
+                        )
+                    ) {
+                        if ($withdraw_value < $lowestBankNote) {
+                            break;
                         }
 
-                        if ($withdraw_value < $lowestBankNote && $withdraw_value != 0) {
-                            return response()->json(
-                                [
-                                    'message' => 'Error.',
-                                    'errors' => ['Não há cédulas disponíveis para o valor solicitado'],
-                                ]
-                            , 404); 
-                        }
-
-                        if ($countBankNotes > 0) {
-                            $amountBankNotes[$bn] = $countBankNotes;
-                        }
+                        $withdraw_value -= $bn;
+                        $countBankNotes++;
                     }
 
-                    $accountBank->balance -= intval($request->value);
-                    $accountBank->save();
+                    if ($withdraw_value < $lowestBankNote && $withdraw_value != 0) {
+                        return response()->json(
+                            [
+                                'message' => 'Error.',
+                                'errors' => ['Não há cédulas disponíveis para o valor solicitado'],
+                            ]
+                        , 403); 
+                    }
 
-                    return response()->json(
-                        [
-                            'message' => 'Success.',
-                            'data' => [
-                                'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
-                                'account_bank_id' => $accountBank->id,
-                                'balance' => $accountBank->balance,
-                            ],
-                        ]
-                    ); 
+                    if ($countBankNotes > 0) {
+                        $amountBankNotes[$bn] = $countBankNotes;
+                    }
                 }
+
+                $accountBank->balance -= intval($request->value);
+                $accountBank->save();
+
+                return response()->json(
+                    [
+                        'message' => 'Success.',
+                        'data' => [
+                            'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
+                            'account_bank_id' => $accountBank->id,
+                            'balance' => $accountBank->balance,
+                        ],
+                    ]
+                ); 
             }
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
         }
     }
 
@@ -105,32 +101,28 @@ class AtmSimulatorController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        try {
-            $accountBank = AccountBank::where([
-                'id'=> $request->account_bank_id,
-                'account_bank_type_id' => $request->account_bank_type_id,
-                'user_id' => $request->user_id
-            ])
-            ->first();
+        $accountBank = AccountBank::where([
+            'id'=> $request->account_bank_id,
+            'account_bank_type_id' => $request->account_bank_type_id,
+            'user_id' => $request->user_id
+        ])
+        ->first();
 
-            if (!$accountBank) {
-                return response()->json(['Account Bank not found'], 404);
-            } else {
-                $accountBank->balance += intval($request->value);
-                $accountBank->save();
+        if (!$accountBank) {
+            return response()->json(["errors" => ["Account Bank not found."]], 404);
+        } else {
+            $accountBank->balance += intval($request->value);
+            $accountBank->save();
 
-                return response()->json(
-                    [
-                        'message' => 'Success.',
-                        'data' => [
-                            'account_bank_id' => $accountBank->id,
-                            'balance' => $accountBank->balance,
-                        ],
-                    ]
-                ); 
-            }
-        } catch (\Exception $e) {
-            return response()->json([$e->getMessage()], 400);
+            return response()->json(
+                [
+                    'message' => 'Success.',
+                    'data' => [
+                        'account_bank_id' => $accountBank->id,
+                        'balance' => $accountBank->balance,
+                    ],
+                ]
+            ); 
         }
     }
 
