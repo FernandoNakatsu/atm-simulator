@@ -147,8 +147,8 @@ class UserTest extends TestCase
     public function testSearchUserTest()
     {
         // Set
-        $search = "João Teste";
-        $searchString = mb_strtolower($search);
+        $fullname = "João Teste";
+        $searchString = mb_strtolower($fullname);
         $expectedResult = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
         $responseBody = [
             'message' => 'Success.',
@@ -156,7 +156,7 @@ class UserTest extends TestCase
         ];
 
         // Actions
-        $response = $this->getJson("/api/user/{$search}");
+        $response = $this->getJson("/api/user/{$fullname}");
 
         // Assertions
         $response->assertStatus(200);

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\AccountBank;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\AccountBank;
+use App\Models\{AccountBank, User};
+use Illuminate\Http\Request;
 
 class AccountBankController extends Controller
 {
@@ -21,8 +21,8 @@ class AccountBankController extends Controller
 
         $accountBank = AccountBank::where(
             [
-                'account_bank_type_id' => $request->$account_bank_type_id,
-                'user_id' => $request->$user_id,
+                'account_bank_type_id' => $request->account_bank_type_id,
+                'user_id' => $request->user_id,
             ]
         )->first();
 

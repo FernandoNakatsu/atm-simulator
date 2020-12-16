@@ -1,0 +1,204 @@
+openapi: 3.0.1
+servers:
+  - url: /api
+info:
+  description: |
+    Interact with Backend ATM Simulator API.
+  version: 1.0.0
+  title: Backend ATM Simulator API
+tags:
+  - name: User
+    description: Manage customer cart
+  - name: Account Bank
+    description: Manage users
+  - name: ATM Simulator
+    description: Manage users
+paths:
+  /user/{fullname}:
+    get:
+      summary: Search users by fullname
+      description: Request for list users by search fullname.
+      parameters:
+        - name: fullname
+          in: path
+          required: true
+          description: User Fullname.
+          schema:
+            type: string
+            format: fullname
+            description: User fullname.
+            example: 'John Doe'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserData'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - User
+  /user:
+    post:
+      summary: Create user
+      description: Request for create the user.
+      requestBody:
+        description: User fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {"fullname":"John Doe","birthday":"2000-01-01","cpf":"111.111.111-11"}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                example: ["User created successfully."]
+      tags:
+        - User
+    put:
+      summary: Update user
+      description: Request for update the user.
+      requestBody:
+        description: User fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {"user_id":1,"fullname":"John Doe 2","birthday":"2000-02-02","cpf":"222.222.222-22"}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                example: ["User updated successfully."]
+      tags:
+        - User
+    delete:
+      summary: Delete user
+      description: Request for delete the user.
+      requestBody:
+        description: User fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {"user_id":1}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                example: ["User deleted successfully."]
+      tags:
+        - User
+  /account-bank:
+    post:
+      summary: Created Account Bank
+      description: Request for create the user.
+      requestBody:
+        description: User fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {"user_id":1,"account_bank_type_id":1}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                example: ["Account Bank created successfully."]
+      tags:
+        - Account Bank
+  /atm-simulator/withdraw:
+    post:
+      summary: Search users by fullname
+      description: Retrieve information about the Users.
+      operationId: userInfo
+      parameters:
+        - name: fullname
+          in: path
+          required: true
+          description: User Fullname.
+          schema:
+            $ref: '#/components/schemas/Fullname'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserData'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - ATM Simulator
+  /atm-simulator/deposit:
+    post:
+      summary: Search users by fullname
+      description: Retrieve information about the Users.
+      operationId: userInfo
+      parameters:
+        - name: fullname
+          in: path
+          required: true
+          description: User Fullname.
+          schema:
+            $ref: '#/components/schemas/Fullname'
+      responses:
+        '200':
+          $ref: '#/components/responses/UserData'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+        '500':
+          $ref: '#/components/responses/UnexpectedError'
+      tags:
+        - ATM Simulator
+components:
+  schemas:
+    UserData:
+      description: The Users information
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Insight about operation.
+                example: Success.
+              data:
+                example: [{"id":1,"fullname":"John Doe","birthday":"2000-01-01","cpf":"111.111.111-11","created_at":"2020-12-16 16:13:20","updated_at":"2020-12-16 16:13:20"}]
+    UserNotFound:
+      description: User Not Found.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: User-friendly Error message.
+                example: Not Found.
+    UnexpectedError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: User-friendly Error message.
+                example: Internal server error.

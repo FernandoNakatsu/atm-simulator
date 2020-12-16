@@ -82,10 +82,14 @@ class UserController extends Controller
         }
     }
 
-    public function search($search)
+    public function search($fullname)
     {
-        $searchString = mb_strtolower($search);
+        $searchString = mb_strtolower($fullname);
         $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
+
+        if ($result->isEmpty()) {
+            return response()->json(['message' => 'Not Found.'], 404);
+        }
 
         return response()->json(
             [
