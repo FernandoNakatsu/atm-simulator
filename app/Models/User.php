@@ -11,16 +11,16 @@ class User extends Model
 	protected $table = 'user';
 
 	protected $casts = [
-		'birthdate' => 'date:Y-m-d',
+		'birthday' => 'date:Y-m-d',
 	];
 
 	protected $dates = [
-		'birthdate' => 'date:Y-m-d',
+		'birthday' => 'date:Y-m-d',
 	];
 
 	protected $fillable = [
 		'fullname',
-		'birthdate',
+		'birthday',
 		'cpf'
 	];
 

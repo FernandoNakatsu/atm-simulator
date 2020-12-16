@@ -16,7 +16,7 @@ class CreateUserTable extends Migration
         Schema::create('user', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('fullname');
-            $table->date('birthdate');
+            $table->date('birthday');
             $table->string('cpf');
             $table->timestamps();
         });

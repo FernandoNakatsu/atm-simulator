@@ -12,7 +12,7 @@ class UserController extends Controller
     {
         $validator = \Validator::make($request->all(), [
             'fullname' => 'required|string',
-            'birthdate' => 'required|date_format:Y-m-d',
+            'birthday' => 'required|date_format:Y-m-d',
             'cpf' => 'required|string',
         ]);
 
@@ -22,7 +22,7 @@ class UserController extends Controller
 
         $user = new User;
         $user->fullname = $request->fullname;
-        $user->birthdate = $request->birthdate;
+        $user->birthday = $request->birthday;
         $user->cpf = $request->cpf;
         $user->save();
 
@@ -34,7 +34,7 @@ class UserController extends Controller
         $validator = \Validator::make($request->all(), [
             'user_id' => 'required|integer',
             'fullname' => 'nullable|string',
-            'birthdate' => 'nullable|date_format:Y-m-d',
+            'birthday' => 'nullable|date_format:Y-m-d',
             'cpf' => 'nullable|string',
         ]);
 
@@ -48,8 +48,8 @@ class UserController extends Controller
                 $user->fullname = $request->fullname;
             }
 
-            if ($request->filled('birthdate')) {
-                $user->birthdate = $request->birthdate;
+            if ($request->filled('birthday')) {
+                $user->birthday = $request->birthday;
             }
 
             if ($request->filled('cpf')) {

@@ -15,7 +15,7 @@ class UserTest extends TestCase
         // Set
         $data = [
             "fullname" => "João Teste",
-            "birthdate" => "2000-01-01",
+            "birthday" => "2000-01-01",
             "cpf" => "111.111.111-11"
         ];
         $responseBody = ['User created successfully'];
@@ -32,7 +32,7 @@ class UserTest extends TestCase
     {
         // Set
         $data = [
-            "birthdate" => "2000-01-01",
+            "birthday" => "2000-01-01",
             "cpf" => "111.111.111-11"
         ];
         $responseBody = ["errors" => ["The fullname field is required."]];
@@ -52,7 +52,7 @@ class UserTest extends TestCase
         $data = [
             "user_id" => $user->id,
             "fullname" => "João Teste Updated",
-            "birthdate" => "2000-02-02",
+            "birthday" => "2000-02-02",
             "cpf" => "222.222.222-22"
         ];
         $responseBody = ['User updated successfully'];
@@ -70,7 +70,7 @@ class UserTest extends TestCase
         // Set
         $data = [
             "fullname" => "João Teste Updated",
-            "birthdate" => "2000-02-02",
+            "birthday" => "2000-02-02",
             "cpf" => "222.222.222-22"
         ];
         $responseBody = ["errors" => ["The user id field is required."]];
