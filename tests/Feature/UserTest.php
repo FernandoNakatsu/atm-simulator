@@ -28,6 +28,23 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
+    public function testCreateUserWithoutFullnameTest()
+    {
+        // Set
+        $data = [
+            "birthdate" => "2000-01-01",
+            "cpf" => "111.111.111-11"
+        ];
+        $responseBody = ["errors":["The fullname field is required."]];
+
+        // Actions
+        $response = $this->postJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(422);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
     public function testUpdateUserTest()
     {
         // Set
