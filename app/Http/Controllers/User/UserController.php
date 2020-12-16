@@ -65,7 +65,7 @@ class UserController extends Controller
 
                 return response()->json(['User updated successfully'], 200);
             } else {
-                return response()->json(['User not found'], 404);
+                return response()->json(["errors" => ["User not found."]], 404);
             }
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);
@@ -87,7 +87,7 @@ class UserController extends Controller
 
                 return response()->json(['User deleted successfully'], 200);
             } else {
-                return response()->json(['User not found'], 404);
+                return response()->json(["errors" => ["User not found."]], 404);
             }
         } catch (\Exception $e) {
             return response()->json([$e->getMessage()], 400);

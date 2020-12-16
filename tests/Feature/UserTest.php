@@ -83,6 +83,22 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
+    public function testUpdateUserNotFoundTest()
+    {
+        // Set
+        $user = User::latest()->first();
+        $user_id_nonexistent = $user ? $user->id + 1 : 1;
+        $data = ["user_id" => $user_id_nonexistent];
+        $responseBody = ["errors" => ["User not found."]];
+
+        // Actions
+        $response = $this->putJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(404);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
     public function testDeleteUserTest()
     {
         // Set
@@ -112,6 +128,21 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
+    public function testDeletedUserNotFoundTest()
+    {
+        // Set
+        $user = User::latest()->first();
+        $user_id_nonexistent = $user ? $user->id + 1 : 1;
+        $data = ["user_id" => $user_id_nonexistent];
+        $responseBody = ["errors" => ["User not found."]];
+
+        // Actions
+        $response = $this->deleteJson("/api/user", $data);
+
+        // Assertions
+        $response->assertStatus(404);
+        $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
 
     public function testSearchUserTest()
     {
