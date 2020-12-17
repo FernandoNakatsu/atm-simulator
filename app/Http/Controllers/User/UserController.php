@@ -10,11 +10,14 @@ class UserController extends Controller
 {
     public function create(Request $request)
     {
-        $validator = \Validator::make($request->all(), [
+        $customMessages = ['cpf.formato_cpf'=> 'Invalid CPF format.'];
+        $rules = [
             'fullname' => 'required|string',
             'birthday' => 'required|date_format:Y-m-d',
-            'cpf' => 'required|string',
-        ]);
+            'cpf' => 'required|formato_cpf',
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $customMessages);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()], 422);
@@ -31,12 +34,15 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $validator = \Validator::make($request->all(), [
+        $customMessages = ['cpf.formato_cpf'=> 'Invalid CPF format.'];
+        $rules = [
             'user_id' => 'required|integer',
             'fullname' => 'nullable|string',
             'birthday' => 'nullable|date_format:Y-m-d',
-            'cpf' => 'nullable|string',
-        ]);
+            'cpf' => 'nullable|formato_cpf',
+        ];
+
+        $validator = \Validator::make($request->all(), $rules, $customMessages);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()], 422);
@@ -88,7 +94,7 @@ class UserController extends Controller
         $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
 
         if ($result->isEmpty()) {
-            return response()->json(['message' => 'Not Found.'], 404);
+            return response()->json(['errors' => 'User not found.'], 404);
         }
 
         return response()->json(

@@ -14,7 +14,7 @@ class AtmSimulatorController extends Controller
             'account_bank_id' => 'required|integer',
             'account_bank_type_id' => 'required|integer|between:1,2',
             'user_id' => 'required|integer',
-            'value' => 'required|integer'
+            'value' => 'required|integer|min:20'
         ]);
 
         if ($validator->fails()) {
@@ -32,7 +32,7 @@ class AtmSimulatorController extends Controller
             return response()->json(["errors" => ["Account Bank not found."]], 404);
         } else {
             if ($request->withdraw_value > $accountBank->balance) {
-                return response()->json(['Insufficient balance to make the desired withdrawal'], 403);
+                return response()->json(["errors" => ["Insufficient balance to make the desired withdrawal."]], 403);
             } else {
                 $withdraw_value = $request->value;
                 $bankNotes = BankNote::all()->sortByDesc('value')->pluck('value')->toArray();
@@ -57,12 +57,7 @@ class AtmSimulatorController extends Controller
                     }
 
                     if ($withdraw_value < $lowestBankNote && $withdraw_value != 0) {
-                        return response()->json(
-                            [
-                                'message' => 'Error.',
-                                'errors' => ['Não há cédulas disponíveis para o valor solicitado'],
-                            ]
-                        , 403); 
+                        return response()->json(["errors" => ["Unavailable banknotes for the requested amount."]], 403);
                     }
 
                     if ($countBankNotes > 0) {
@@ -95,7 +90,6 @@ class AtmSimulatorController extends Controller
             'user_id' => 'required|integer',
             'value' => 'required|integer|min:1'
         ]);
-
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()], 422);
@@ -130,7 +124,7 @@ class AtmSimulatorController extends Controller
     {   
         $message = array();
         foreach ($amountBankNotes as $bankNote => $amount) {
-            $message[] = "{$amount} nota(s) de {$bankNote}";
+            $message[] = "{$amount} banknotes of {$bankNote}";
         }
         return $message;
     }

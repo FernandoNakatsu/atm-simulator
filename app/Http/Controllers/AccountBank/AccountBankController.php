@@ -19,6 +19,11 @@ class AccountBankController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json(["errors" => ["User not found."]], 404);
+        }
+
         $accountBank = AccountBank::where(
             [
                 'account_bank_type_id' => $request->account_bank_type_id,

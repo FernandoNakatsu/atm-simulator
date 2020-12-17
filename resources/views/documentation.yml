@@ -8,16 +8,17 @@ info:
   title: Backend ATM Simulator API
 tags:
   - name: User
-    description: Manage customer cart
+    description: Manage User
   - name: Account Bank
-    description: Manage users
+    description: Manage Account Bank
   - name: ATM Simulator
-    description: Manage users
+    description: Manage ATM Simulator
 paths:
   /user/{fullname}:
     get:
       summary: Search users by fullname
       description: Request for list users by search fullname.
+      operationId: searchUser
       parameters:
         - name: fullname
           in: path
@@ -26,21 +27,46 @@ paths:
           schema:
             type: string
             format: fullname
-            description: User fullname.
             example: 'John Doe'
       responses:
         '200':
-          $ref: '#/components/responses/UserData'
+          $ref: '#/components/responses/user/UserData'
         '404':
-          $ref: '#/components/responses/UserNotFound'
+          $ref: '#/components/responses/user/UserNotFound'
         '500':
-          $ref: '#/components/responses/UnexpectedError'
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - User
   /user:
     post:
       summary: Create user
       description: Request for create the user.
+      operationId: createUser
+      parameters:
+        - name: fullname
+          in: body
+          required: true
+          description: User Fullname.
+          schema:
+            type: string
+            format: fullname
+            example: '"fullname": "John Doe"'
+        - name: birthday
+          in: body
+          required: true
+          description: User birthday.
+          schema:
+            type: date
+            format: birthday
+            example: '"birthday": "2000-01-01"'
+        - name: cpf
+          in: body
+          required: true
+          description: User cpf.
+          schema:
+            type: string
+            format: cpf
+            example: '"cpf": "111.111.111-11"'
       requestBody:
         description: User fields
         required: true
@@ -48,7 +74,11 @@ paths:
           application/json:
             schema:
               type: object
-              example: {"fullname":"John Doe","birthday":"2000-01-01","cpf":"111.111.111-11"}
+              example: {
+                "fullname": "John Doe",
+                "birthday": "2000-01-01",
+                "cpf": "111.111.111-11"
+              }
       responses:
         '201':
           content:
@@ -56,11 +86,49 @@ paths:
               schema:
                 type: object
                 example: ["User created successfully."]
+        '422':
+          $ref: '#/components/responses/user/UserCreateError422'
+        '500':
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - User
     put:
       summary: Update user
       description: Request for update the user.
+      operationId: updateUser
+      parameters:
+        - name: user_id
+          in: body
+          required: true
+          description: User id.
+          schema:
+            type: integer
+            format: user_id
+            example: '"user_id": 1'
+        - name: fullname
+          in: body
+          required: false
+          description: User Fullname.
+          schema:
+            type: string
+            format: fullname
+            example: '"fullname": "John Doe 2"'
+        - name: birthday
+          in: body
+          required: false
+          description: User birthday.
+          schema:
+            type: date
+            format: birthday
+            example: '"birthday": "2000-02-02"'
+        - name: cpf
+          in: body
+          required: false
+          description: User cpf.
+          schema:
+            type: string
+            format: cpf
+            example: '"cpf": "222.222.222-22"'
       requestBody:
         description: User fields
         required: true
@@ -68,7 +136,12 @@ paths:
           application/json:
             schema:
               type: object
-              example: {"user_id":1,"fullname":"John Doe 2","birthday":"2000-02-02","cpf":"222.222.222-22"}
+              example: {
+                "user_id": 1,
+                "fullname": "John Doe 2",
+                "birthday": "2000-02-02",
+                "cpf": "222.222.222-22"
+              }
       responses:
         '200':
           content:
@@ -76,11 +149,27 @@ paths:
               schema:
                 type: object
                 example: ["User updated successfully."]
+        '404':
+          $ref: '#/components/responses/user/UserNotFound'
+        '422':
+          $ref: '#/components/responses/user/UserUpdateError422'
+        '500':
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - User
     delete:
       summary: Delete user
       description: Request for delete the user.
+      operationId: deleteUser
+      parameters:
+        - name: user_id
+          in: body
+          required: true
+          description: User id.
+          schema:
+            type: integer
+            format: user_id
+            example: '"user_id": 1'
       requestBody:
         description: User fields
         required: true
@@ -88,7 +177,9 @@ paths:
           application/json:
             schema:
               type: object
-              example: {"user_id":1}
+              example: {
+                "user_id": 1
+              }
       responses:
         '200':
           content:
@@ -96,20 +187,46 @@ paths:
               schema:
                 type: object
                 example: ["User deleted successfully."]
+        '422':
+          $ref: '#/components/responses/user/UserDeleteError422'
+        '404':
+          $ref: '#/components/responses/user/UserNotFound'
       tags:
         - User
   /account-bank:
     post:
-      summary: Created Account Bank
-      description: Request for create the user.
+      summary: Create Account Bank
+      description: Request for create the account bank.
+      operationId: createAccountBank
+      parameters:
+        - name: user_id
+          in: body
+          required: true
+          description: User id.
+          schema:
+            type: integer
+            format: user_id
+            description: User id.
+            example: '"user_id": 1'
+        - name: account_bank_type_id
+          in: body
+          required: true
+          description: Account bank type id | Use 1 for 'Conta Corrente' or 2 for 'Conta Poupança'.
+          schema:
+            type: integer
+            format: account_bank_type_id
+            example: '"account_bank_type_id": 1'
       requestBody:
-        description: User fields
+        description: Account Bank fields
         required: true
         content:
           application/json:
             schema:
               type: object
-              example: {"user_id":1,"account_bank_type_id":1}
+              example: {
+                "user_id": 1,
+                "account_bank_type_id": 1
+              }
       responses:
         '200':
           content:
@@ -117,88 +234,242 @@ paths:
               schema:
                 type: object
                 example: ["Account Bank created successfully."]
+        '422':
+          $ref: '#/components/responses/accountBank/AccountBankError422'
+        '403':
+          $ref: '#/components/responses/accountBank/AccountBankAlreadyExistsError'
+        '404':
+          $ref: '#/components/responses/accountBank/AccountBankUserNotFound'
+        '500':
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - Account Bank
   /atm-simulator/withdraw:
     post:
       summary: Search users by fullname
       description: Retrieve information about the Users.
-      operationId: userInfo
+      operationId: atmSimulatorWithDraw
       parameters:
         - name: fullname
-          in: path
+          in: body
           required: true
           description: User Fullname.
           schema:
             $ref: '#/components/schemas/Fullname'
       responses:
         '200':
-          $ref: '#/components/responses/UserData'
+          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
+        '403':
+          $ref: '#/components/responses/atmSimulator/AtmSimulatorError403'
         '404':
-          $ref: '#/components/responses/UserNotFound'
+          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
+        '422':
+          $ref: '#/components/responses/atmSimulator/AtmSimulatorWithdrawError422'
         '500':
-          $ref: '#/components/responses/UnexpectedError'
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - ATM Simulator
   /atm-simulator/deposit:
     post:
       summary: Search users by fullname
       description: Retrieve information about the Users.
-      operationId: userInfo
+      operationId: atmSimulatorDeposit
       parameters:
         - name: fullname
-          in: path
+          in: body
           required: true
           description: User Fullname.
           schema:
             $ref: '#/components/schemas/Fullname'
       responses:
         '200':
-          $ref: '#/components/responses/UserData'
+          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
         '404':
-          $ref: '#/components/responses/UserNotFound'
+          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
+        '422':
+          $ref: '#/components/responses/atmSimulator/AtmSimulatorDepositError422'
         '500':
-          $ref: '#/components/responses/UnexpectedError'
+          $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - ATM Simulator
 components:
-  schemas:
-    UserData:
-      description: The Users information
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: Insight about operation.
-                example: Success.
-              data:
-                example: [{"id":1,"fullname":"John Doe","birthday":"2000-01-01","cpf":"111.111.111-11","created_at":"2020-12-16 16:13:20","updated_at":"2020-12-16 16:13:20"}]
-    UserNotFound:
-      description: User Not Found.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - message
-            properties:
-              message:
-                type: string
-                description: User-friendly Error message.
-                example: Not Found.
-    UnexpectedError:
-      description: Internal server error.
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - message
-            properties:
-              message:
-                type: string
-                description: User-friendly Error message.
-                example: Internal server error.
+  responses:
+    user:
+      UserData:
+        description: The list users information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Insight about operation.
+                  example: Success.
+                data:
+                  example: [
+                    {
+                      "id": 1,
+                      "fullname": "John Doe",
+                      "birthday": "2000-01-01",
+                      "cpf": "111.111.111-11",
+                      "created_at": "2020-12-16 16:13:20",
+                      "updated_at": "2020-12-16 16:13:20"
+                    }
+                  ]
+      UserCreateError422:
+        description: Required fields error. / Invalid format birthday. / Invalid CPF format.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The fullname field is required.",
+                  "The birthday field is required.",
+                  "The cpf field is required.",
+                  "The birthday does not match the format Y-m-d.",
+                  "Invalid CPF format."
+                ]
+              }
+      UserUpdateError422:
+        description: Required fields error. / Invalid format birthday. / Invalid CPF format.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The user id field is required.",
+                  "The birthday does not match the format Y-m-d.",
+                  "Invalid CPF format."
+                ]
+              }
+      UserDeleteError422:
+        description: Required fields error.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The user id field is required."
+                ]
+              }
+      UserNotFound:
+        description: User Not Found.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "User not found."
+                ]
+              }
+    accountBank:
+      AccountBankAlreadyExistsError:
+        description: Account Bank already exists error.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "Account Bank already exists for this user."
+                ]
+              }
+      AccountBankError422:
+        description: Account Bank required fields error / The bank_type_id is not between 1 and 2.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The account bank type id field is required.",
+                  "The user id field is required.",
+                  "The account bank type id must be between 1 and 2."
+                ]
+              }
+      AccountBankUserNotFound:
+        description: User Not Found.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "User not found."
+                ]
+              }
+    atmSimulator:
+      AtmSimulatorError403:
+        description: The requested operation is invalid.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "Insufficient balance to make the desired withdrawal.",
+                  "Unavailable banknotes for the requested amount."
+                ]
+              }
+      AccountBankNotFound:
+        description: Account Bank Not Found.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "Account Bank not found."
+                ]
+              }
+      AtmSimulatorWithdrawError422:
+        description: Required fields error. / Withdraw value must be at least 20. / The bank_type_id is not between 1 and 2.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The account bank id field is required.",
+                  "The account bank type id field is required.",
+                  "The user id field is required.",
+                  "The value field is required.",
+                  "The value must be at least 20.",
+                  "The account bank type id must be between 1 and 2."
+                ]
+              }
+      AtmSimulatorDepositError422:
+        description: Required fields error. / Deposit value must be at least 1. / The bank_type_id is not between 1 and 2.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "The account bank id field is required.",
+                  "The account bank type id field is required.",
+                  "The user id field is required.",
+                  "The value field is required.",
+                  "The value must be at least 1.",
+                  "The account bank type id must be between 1 and 2."
+                ]
+              }
+    general:
+      UnexpectedError:
+        description: Internal server error.
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  description: User-friendly Error message.
+                  example: Internal server error.
