@@ -23,6 +23,11 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
+        $cpfExists = User::where('cpf', $request->cpf)->first();
+        if ($cpfExists) {
+            return response()->json(["errors" => "This CPF is already registered in the database."], 403); 
+        }
+
         $user = new User;
         $user->fullname = $request->fullname;
         $user->birthday = $request->birthday;
@@ -58,7 +63,12 @@ class UserController extends Controller
                 $user->birthday = $request->birthday;
             }
 
-            if ($request->filled('cpf')) {
+            if ($request->filled('cpf') && $request->cpf != $user->cpf) {
+                $cpfExists = User::where('cpf', $request->cpf)->first();
+                if ($cpfExists) {
+                    return response()->json(["errors" => "This CPF is already registered in the database."], 403); 
+                }
+
                 $user->cpf = $request->cpf;
             }
             
@@ -88,20 +98,23 @@ class UserController extends Controller
         }
     }
 
-    public function search($fullname)
+    public function searchUser($cpf)
     {
-        $searchString = mb_strtolower($fullname);
-        $result = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
+        $customMessages = ['cpf.formato_cpf'=> 'Invalid CPF format.'];
+        $rules = ['cpf' => 'required|formato_cpf'];
 
-        if ($result->isEmpty()) {
+        $validator = \Validator::make(["cpf" => $cpf], $rules, $customMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()], 422);
+        }
+
+        $user = User::with('account_banks')->where("cpf", $cpf)->first();
+
+        if (!$user) {
             return response()->json(['errors' => 'User not found.'], 404);
         }
 
-        return response()->json(
-            [
-                'message' => 'Success.',
-                'data' => $result,
-            ]
-        );
+        return response()->json($user, 200);
     }
 }

@@ -147,16 +147,11 @@ class UserTest extends TestCase
     public function testSearchUserTest()
     {
         // Set
-        $fullname = "João Teste";
-        $searchString = mb_strtolower($fullname);
-        $expectedResult = User::whereRaw("lower(fullname) LIKE '%{$searchString}%'")->get();
-        $responseBody = [
-            'message' => 'Success.',
-            'data' => $expectedResult,
-        ];
+        $cpf = "111.111.111-11";
+        $responseBody = User::with('account_banks')->where("cpf", $cpf)->first();
 
         // Actions
-        $response = $this->getJson("/api/user/{$fullname}");
+        $response = $this->getJson("/api/user/{$cpf}");
 
         // Assertions
         $response->assertStatus(200);

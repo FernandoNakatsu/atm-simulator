@@ -28,7 +28,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::post('', ['uses' => 'User\UserController@create']);
     Route::put('', ['uses' => 'User\UserController@update']);
     Route::delete('', ['uses' => 'User\UserController@delete']);
-    Route::get('{fullname}', ['uses' => 'User\UserController@search']);
+    Route::get('{cpf}', ['uses' => 'User\UserController@searchUser']);
 });
 
 Route::group(['prefix' => 'account-bank'], function () {

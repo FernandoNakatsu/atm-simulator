@@ -14,25 +14,27 @@ tags:
   - name: ATM Simulator
     description: Manage ATM Simulator
 paths:
-  /user/{fullname}:
+  /user/{cpf}:
     get:
-      summary: Search users by fullname
-      description: Request for list users by search fullname.
+      summary: Search user by CPF
+      description: Retrieve information about the User by CPF.
       operationId: searchUser
       parameters:
-        - name: fullname
+        - name: cpf
           in: path
           required: true
-          description: User Fullname.
+          description: User cpf.
           schema:
             type: string
-            format: fullname
-            example: 'John Doe'
+            format: cpf
+            example: "222.222.222-22"
       responses:
         '200':
           $ref: '#/components/responses/user/UserData'
         '404':
           $ref: '#/components/responses/user/UserNotFound'
+        '422':
+          $ref: '#/components/responses/user/UserSearchError422'
         '500':
           $ref: '#/components/responses/general/UnexpectedError'
       tags:
@@ -86,6 +88,8 @@ paths:
               schema:
                 type: object
                 example: ["User created successfully."]
+        '403':
+          $ref: '#/components/responses/general/CpfIsAlreadyRegistered'
         '422':
           $ref: '#/components/responses/user/UserCreateError422'
         '500':
@@ -149,6 +153,8 @@ paths:
               schema:
                 type: object
                 example: ["User updated successfully."]
+        '403':
+          $ref: '#/components/responses/general/CpfIsAlreadyRegistered'
         '404':
           $ref: '#/components/responses/user/UserNotFound'
         '422':
@@ -301,22 +307,24 @@ components:
           application/json:
             schema:
               type: object
-              properties:
-                message:
-                  type: string
-                  description: Insight about operation.
-                  example: Success.
-                data:
-                  example: [
+              example: {
+                "id": 3,
+                "fullname": "John Doe 2",
+                "birthday": "2000-02-02",
+                "cpf": "222.222.222-22",
+                "created_at": "2020-12-16 18:22:05",
+                "updated_at": "2020-12-16 18:22:05",
+                "account_banks": [
                     {
-                      "id": 1,
-                      "fullname": "John Doe",
-                      "birthday": "2000-01-01",
-                      "cpf": "111.111.111-11",
-                      "created_at": "2020-12-16 16:13:20",
-                      "updated_at": "2020-12-16 16:13:20"
+                        "id": 7,
+                        "user_id": 3,
+                        "account_bank_type_id": 2,
+                        "balance": 0,
+                        "created_at": "2020-12-16 18:54:03",
+                        "updated_at": "2020-12-16 18:54:03"
                     }
-                  ]
+                ]
+              }
       UserCreateError422:
         description: Required fields error. / Invalid format birthday. / Invalid CPF format.
         content:
@@ -354,6 +362,17 @@ components:
               example: {
                 "errors": [
                   "The user id field is required."
+                ]
+              }
+      UserSearchError422:
+        description: Invalid CPF format.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "Invalid CPF format."
                 ]
               }
       UserNotFound:
@@ -460,6 +479,17 @@ components:
                 ]
               }
     general:
+      CpfIsAlreadyRegistered:
+        description: CPF is already registered.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "This CPF is already registered in the database."
+                ]
+              }
       UnexpectedError:
         description: Internal server error.
         content:
