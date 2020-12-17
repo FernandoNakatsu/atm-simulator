@@ -281,15 +281,64 @@ paths:
       description: Retrieve information about the Users.
       operationId: atmSimulatorDeposit
       parameters:
-        - name: fullname
+        - name: user_id
           in: body
           required: true
-          description: User Fullname.
+          description: User id.
           schema:
-            $ref: '#/components/schemas/Fullname'
+            type: integer
+            format: user_id
+            description: User id.
+            example: '"user_id": 3'
+        - name: account_bank_id
+          in: body
+          required: true
+          description: Account bank id.
+          schema:
+            type: integer
+            format: account_bank_id
+            example: '"account_bank_id": 7'
+        - name: account_bank_type_id
+          in: body
+          required: true
+          description: Account bank type id | Use 1 for 'Conta Corrente' or 2 for 'Conta Poupança'.
+          schema:
+            type: integer
+            format: account_bank_type_id
+            example: '"account_bank_type_id": 2'
+        - name: value
+          in: body
+          required: true
+          description: Amount of money to be deposited.
+          schema:
+            type: integer
+            format: value
+            example: '"value": 1000'
+      requestBody:
+        description: Deposit fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "user_id": 3,
+                "account_bank_id": 7,
+                "account_bank_type_id": 2,
+                "value": 1000
+              }
       responses:
         '200':
-          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  "user_id": 3,
+                  "account_bank_id": 7,
+                  "account_bank_type_id": 2,
+                  "balance": 2000
+                }
         '404':
           $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
         '422':

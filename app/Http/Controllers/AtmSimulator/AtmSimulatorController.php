@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\AtmSimulator;
 
-use Illuminate\Http\Request;
+use DB;
 use App\Http\Controllers\Controller;
 use App\Models\{AccountBank,BankNote};
+use Illuminate\Http\Request;
 
 class AtmSimulatorController extends Controller
 {
@@ -21,17 +22,25 @@ class AtmSimulatorController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
+        // Begin the transaction
+        DB::beginTransaction();
+
         $accountBank = AccountBank::where([
             'id'=> $request->account_bank_id,
             'account_bank_type_id' => $request->account_bank_type_id,
             'user_id' => $request->user_id
         ])
+        ->lockForUpdate()
         ->first();
 
         if (!$accountBank) {
+            // Roll back the transaction
+            DB::rollBack();
             return response()->json(["errors" => ["Account Bank not found."]], 404);
         } else {
             if ($request->withdraw_value > $accountBank->balance) {
+                // Roll back the transaction
+                DB::rollBack();
                 return response()->json(["errors" => ["Insufficient balance to make the desired withdrawal."]], 403);
             } else {
                 $withdraw_value = $request->value;
@@ -57,6 +66,8 @@ class AtmSimulatorController extends Controller
                     }
 
                     if ($withdraw_value < $lowestBankNote && $withdraw_value != 0) {
+                        // Roll back the transaction
+                        DB::rollBack();
                         return response()->json(["errors" => ["Unavailable banknotes for the requested amount."]], 403);
                     }
 
@@ -68,16 +79,14 @@ class AtmSimulatorController extends Controller
                 $accountBank->balance -= intval($request->value);
                 $accountBank->save();
 
-                return response()->json(
-                    [
-                        'message' => 'Success.',
-                        'data' => [
-                            'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
-                            'account_bank_id' => $accountBank->id,
-                            'balance' => $accountBank->balance,
-                        ],
-                    ]
-                ); 
+                // Commit the transaction
+                DB::commit();
+
+                return response()->json([
+                    'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
+                    'account_bank_id' => $accountBank->id,
+                    'balance' => $accountBank->balance,
+                ], 200); 
             }
         }
     }
@@ -95,28 +104,33 @@ class AtmSimulatorController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
+        // Begin the transaction
+        DB::beginTransaction();
+
         $accountBank = AccountBank::where([
             'id'=> $request->account_bank_id,
             'account_bank_type_id' => $request->account_bank_type_id,
             'user_id' => $request->user_id
         ])
+        ->lockForUpdate()
         ->first();
 
         if (!$accountBank) {
+            // Roll back the transaction
+            DB::rollBack();
             return response()->json(["errors" => ["Account Bank not found."]], 404);
         } else {
             $accountBank->balance += intval($request->value);
             $accountBank->save();
 
-            return response()->json(
-                [
-                    'message' => 'Success.',
-                    'data' => [
-                        'account_bank_id' => $accountBank->id,
-                        'balance' => $accountBank->balance,
-                    ],
-                ]
-            ); 
+            // Commit the transaction
+            DB::commit();
+            return response()->json([
+                'user_id' => $accountBank->user_id,
+                'account_bank_id' => $accountBank->id,
+                'account_bank_type_id' => $accountBank->account_bank_type_id,
+                'balance' => $accountBank->balance
+            ], 200); 
         }
     }
 
