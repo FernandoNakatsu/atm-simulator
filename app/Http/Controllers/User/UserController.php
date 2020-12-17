@@ -109,7 +109,7 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()->all()], 422);
         }
 
-        $user = User::with('account_banks')->where("cpf", $cpf)->first();
+        $user = User::with('account_banks','account_banks.account_bank_type')->where("cpf", $cpf)->first();
 
         if (!$user) {
             return response()->json(['errors' => 'User not found.'], 404);

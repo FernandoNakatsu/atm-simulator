@@ -148,7 +148,7 @@ class UserTest extends TestCase
     {
         // Set
         $cpf = "111.111.111-11";
-        $responseBody = User::with('account_banks')->where("cpf", $cpf)->first();
+        $responseBody = User::with('account_banks','account_banks.account_bank_type')->where("cpf", $cpf)->first();
 
         // Actions
         $response = $this->getJson("/api/user/{$cpf}");
