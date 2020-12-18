@@ -36,7 +36,7 @@ class UserTest extends TestCase
     public function testUpdateUserTest()
     {
         // Set
-        $user_id = $this->createUserTest()->id;
+        $user_id = $this->createUser()->id;
         $data = [
             "user_id" => $user_id,
             "fullname" => "João Teste Updated",
@@ -58,7 +58,7 @@ class UserTest extends TestCase
     public function testDeleteUserTest()
     {
         // Set
-        $user_id = $this->createUserTest()->id;
+        $user_id = $this->createUser()->id;
         $data = ["user_id" => $user_id];
         $responseBody = ["User deleted successfully."];
 
@@ -73,7 +73,7 @@ class UserTest extends TestCase
     public function testSearchUserTest()
     {
         // Set
-        $cpf = $this->createUserTest()->cpf;
+        $cpf = $this->createUser()->cpf;
         $responseBody = User::with('account_banks','account_banks.account_bank_type')->where("cpf", $cpf)->first();
 
         // Actions
@@ -84,7 +84,7 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    private function createUserTest()
+    private function createUser()
     {
         return User::create([
             'fullname' => 'João Teste',

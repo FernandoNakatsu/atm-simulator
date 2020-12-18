@@ -17,7 +17,7 @@ class CreateAccountBankTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('account_bank_type_id')->unsigned();
-            $table->bigInteger('balance');
+            $table->bigInteger('balance')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');

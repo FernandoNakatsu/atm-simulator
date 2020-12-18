@@ -32,7 +32,7 @@ class AccountBankController extends Controller
         )->first();
 
         if ($accountBank) {
-            return response()->json(["Account Bank already exists for this user."], 403); 
+            return response()->json(["errors" => ["Account Bank already exists for this user."]], 403); 
         }
 
         $accountBank = new AccountBank;
