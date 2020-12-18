@@ -12,9 +12,9 @@ class AtmSimulatorController extends Controller
     public function withdraw(Request $request)
     {
         $validator = \Validator::make($request->all(), [
+            'user_id' => 'required|integer',
             'account_bank_id' => 'required|integer',
             'account_bank_type_id' => 'required|integer|between:1,2',
-            'user_id' => 'required|integer',
             'value' => 'required|integer|min:20'
         ]);
 
@@ -83,8 +83,10 @@ class AtmSimulatorController extends Controller
                 DB::commit();
 
                 return response()->json([
-                    'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
+                    'user_id' => $accountBank->user_id,
                     'account_bank_id' => $accountBank->id,
+                    'account_bank_type_id' => $accountBank->account_bank_type_id,
+                    'banknotes_info' => $this->messageAmountBankNotes($amountBankNotes),
                     'balance' => $accountBank->balance,
                 ], 200); 
             }
@@ -94,9 +96,9 @@ class AtmSimulatorController extends Controller
     public function deposit(Request $request)
     {
         $validator = \Validator::make($request->all(), [
+            'user_id' => 'required|integer',
             'account_bank_id' => 'required|integer',
             'account_bank_type_id' => 'required|integer|between:1,2',
-            'user_id' => 'required|integer',
             'value' => 'required|integer|min:1'
         ]);
 

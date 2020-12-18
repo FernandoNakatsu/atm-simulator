@@ -23,7 +23,7 @@ paths:
         - name: cpf
           in: path
           required: true
-          description: User cpf.
+          description: User CPF.
           schema:
             type: string
             format: cpf
@@ -32,7 +32,7 @@ paths:
         '200':
           $ref: '#/components/responses/user/UserData'
         '404':
-          $ref: '#/components/responses/user/UserNotFound'
+          $ref: '#/components/responses/general/UserNotFound'
         '422':
           $ref: '#/components/responses/user/UserSearchError422'
         '500':
@@ -64,7 +64,7 @@ paths:
         - name: cpf
           in: body
           required: true
-          description: User cpf.
+          description: User CPF.
           schema:
             type: string
             format: cpf
@@ -128,7 +128,7 @@ paths:
         - name: cpf
           in: body
           required: false
-          description: User cpf.
+          description: User CPF.
           schema:
             type: string
             format: cpf
@@ -156,7 +156,7 @@ paths:
         '403':
           $ref: '#/components/responses/general/CpfIsAlreadyRegistered'
         '404':
-          $ref: '#/components/responses/user/UserNotFound'
+          $ref: '#/components/responses/general/UserNotFound'
         '422':
           $ref: '#/components/responses/user/UserUpdateError422'
         '500':
@@ -196,7 +196,7 @@ paths:
         '422':
           $ref: '#/components/responses/user/UserDeleteError422'
         '404':
-          $ref: '#/components/responses/user/UserNotFound'
+          $ref: '#/components/responses/general/UserNotFound'
       tags:
         - User
   /account-bank:
@@ -245,26 +245,78 @@ paths:
         '403':
           $ref: '#/components/responses/accountBank/AccountBankAlreadyExistsError'
         '404':
-          $ref: '#/components/responses/accountBank/AccountBankUserNotFound'
+          $ref: '#/components/responses/general/UserNotFound'
         '500':
           $ref: '#/components/responses/general/UnexpectedError'
       tags:
         - Account Bank
   /atm-simulator/withdraw:
     post:
-      summary: Search users by fullname
-      description: Retrieve information about the Users.
+      summary: Withdraw operation
+      description: The withdraw operation of ATM Simulator
       operationId: atmSimulatorWithDraw
       parameters:
-        - name: fullname
+        - name: user_id
           in: body
           required: true
-          description: User Fullname.
+          description: User id.
           schema:
-            $ref: '#/components/schemas/Fullname'
+            type: integer
+            format: user_id
+            description: User id.
+            example: '"user_id": 3'
+        - name: account_bank_id
+          in: body
+          required: true
+          description: Account bank id.
+          schema:
+            type: integer
+            format: account_bank_id
+            example: '"account_bank_id": 7'
+        - name: account_bank_type_id
+          in: body
+          required: true
+          description: Account bank type id | Use 1 for 'Conta Corrente' or 2 for 'Conta Poupança'.
+          schema:
+            type: integer
+            format: account_bank_type_id
+            example: '"account_bank_type_id": 2'
+        - name: value
+          in: body
+          required: true
+          description: Amount of money to be withdrawn.
+          schema:
+            type: integer
+            format: value
+            example: '"value": 1000'
+      requestBody:
+        description: Deposit fields
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "user_id": 3,
+                "account_bank_id": 7,
+                "account_bank_type_id": 2,
+                "value": 1000
+              }
       responses:
         '200':
-          $ref: '#/components/responses/atmSimulator/AccountBankNotFound'
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  "user_id": 3,
+                  "account_bank_id": 7,
+                  "account_bank_type_id": 2,
+                  "banknotes_info": [
+                      "10 banknotes of 100"
+                  ],
+                  "balance": 2000
+              }
         '403':
           $ref: '#/components/responses/atmSimulator/AtmSimulatorError403'
         '404':
@@ -277,8 +329,8 @@ paths:
         - ATM Simulator
   /atm-simulator/deposit:
     post:
-      summary: Search users by fullname
-      description: Retrieve information about the Users.
+      summary: Deposit operation
+      description: The deposit operation of ATM Simulator
       operationId: atmSimulatorDeposit
       parameters:
         - name: user_id
@@ -351,7 +403,7 @@ components:
   responses:
     user:
       UserData:
-        description: The list users information
+        description: The User information
         content:
           application/json:
             schema:
@@ -430,17 +482,6 @@ components:
                   "Invalid CPF format."
                 ]
               }
-      UserNotFound:
-        description: User Not Found.
-        content:
-          application/json:
-            schema:
-              type: object
-              example: {
-                "errors": [
-                  "User not found."
-                ]
-              }
     accountBank:
       AccountBankAlreadyExistsError:
         description: Account Bank already exists error.
@@ -464,17 +505,6 @@ components:
                   "The account bank type id field is required.",
                   "The user id field is required.",
                   "The account bank type id must be between 1 and 2."
-                ]
-              }
-      AccountBankUserNotFound:
-        description: User Not Found.
-        content:
-          application/json:
-            schema:
-              type: object
-              example: {
-                "errors": [
-                  "User not found."
                 ]
               }
     atmSimulator:
@@ -543,6 +573,17 @@ components:
               example: {
                 "errors": [
                   "This CPF is already registered in the database."
+                ]
+              }
+      UserNotFound:
+        description: User Not Found.
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {
+                "errors": [
+                  "User not found."
                 ]
               }
       UnexpectedError:
