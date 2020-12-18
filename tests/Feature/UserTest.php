@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -10,6 +11,8 @@ use Tests\TestCase;
  */
 class UserTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function testCreateUserTest()
     {
         // Set
@@ -18,6 +21,8 @@ class UserTest extends TestCase
             "birthday" => "2000-01-01",
             "cpf" => "111.111.111-11",
         ];
+
+        // Response Body
         $responseBody = ["User created successfully."];
 
         // Actions
@@ -28,35 +33,20 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testCreateUserWithoutFullnameTest()
-    {
-        // Set
-        $data = [
-            "birthday" => "2000-01-01",
-            "cpf" => "111.111.111-11",
-        ];
-        $responseBody = ["errors" => ["The fullname field is required."]];
-
-        // Actions
-        $response = $this->postJson("/api/user", $data);
-
-        // Assertions
-        $response->assertStatus(422);
-        $this->assertEquals(json_encode($responseBody), $response->getContent());
-    }
-
     public function testUpdateUserTest()
     {
         // Set
-        $user = User::first();
+        $user_id = $this->createUserTest()->id;
         $data = [
-            "user_id" => $user->id,
+            "user_id" => $user_id,
             "fullname" => "João Teste Updated",
             "birthday" => "2000-02-02",
             "cpf" => "222.222.222-22"
         ];
-        $responseBody = ['User updated successfully'];
 
+        // Response Body
+        $responseBody = ['User updated successfully.'];
+        
         // Actions
         $response = $this->putJson("/api/user", $data);
 
@@ -65,45 +55,11 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testUpdateUserWithoutUserIdTest()
-    {
-        // Set
-        $data = [
-            "fullname" => "João Teste Updated",
-            "birthday" => "2000-02-02",
-            "cpf" => "222.222.222-22"
-        ];
-        $responseBody = ["errors" => ["The user id field is required."]];
-
-        // Actions
-        $response = $this->putJson("/api/user", $data);
-
-        // Assertions
-        $response->assertStatus(422);
-        $this->assertEquals(json_encode($responseBody), $response->getContent());
-    }
-
-    public function testUpdateUserNotFoundTest()
-    {
-        // Set
-        $user = User::latest()->first();
-        $user_id_nonexistent = $user ? $user->id + 1 : 1;
-        $data = ["user_id" => $user_id_nonexistent];
-        $responseBody = ["errors" => ["User not found."]];
-
-        // Actions
-        $response = $this->putJson("/api/user", $data);
-
-        // Assertions
-        $response->assertStatus(404);
-        $this->assertEquals(json_encode($responseBody), $response->getContent());
-    }
-
     public function testDeleteUserTest()
     {
         // Set
-        $user = User::first();
-        $data = ["user_id" => $user->id];
+        $user_id = $this->createUserTest()->id;
+        $data = ["user_id" => $user_id];
         $responseBody = ["User deleted successfully."];
 
         // Actions
@@ -114,40 +70,10 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testDeleteUserWithoutUserIdTest()
-    {
-        // Set
-        $data = [];
-        $responseBody = ["errors" => ["The user id field is required."]];
-
-        // Actions
-        $response = $this->deleteJson("/api/user", $data);
-
-        // Assertions
-        $response->assertStatus(422);
-        $this->assertEquals(json_encode($responseBody), $response->getContent());
-    }
-
-    public function testDeletedUserNotFoundTest()
-    {
-        // Set
-        $user = User::latest()->first();
-        $user_id_nonexistent = $user ? $user->id + 1 : 1;
-        $data = ["user_id" => $user_id_nonexistent];
-        $responseBody = ["errors" => ["User not found."]];
-
-        // Actions
-        $response = $this->deleteJson("/api/user", $data);
-
-        // Assertions
-        $response->assertStatus(404);
-        $this->assertEquals(json_encode($responseBody), $response->getContent());
-    }
-
     public function testSearchUserTest()
     {
         // Set
-        $cpf = "111.111.111-11";
+        $cpf = $this->createUserTest()->cpf;
         $responseBody = User::with('account_banks','account_banks.account_bank_type')->where("cpf", $cpf)->first();
 
         // Actions
@@ -156,5 +82,14 @@ class UserTest extends TestCase
         // Assertions
         $response->assertStatus(200);
         $this->assertEquals(json_encode($responseBody), $response->getContent());
+    }
+
+    private function createUserTest()
+    {
+        return User::create([
+            'fullname' => 'João Teste',
+            "birthday" => "2000-01-01",
+            "cpf" => "111.111.111-11"
+        ]);
     }
 }

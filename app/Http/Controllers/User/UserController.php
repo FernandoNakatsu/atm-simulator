@@ -74,7 +74,7 @@ class UserController extends Controller
             
             $user->save();
 
-            return response()->json(['User updated successfully'], 200);
+            return response()->json(['User updated successfully.'], 200);
         } else {
             return response()->json(["errors" => ["User not found."]], 404);
         }
