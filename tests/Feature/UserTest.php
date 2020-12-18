@@ -13,7 +13,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateUserTest()
+    public function testCreateUser()
     {
         // Set
         $data = [
@@ -33,7 +33,7 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testUpdateUserTest()
+    public function testUpdateUser()
     {
         // Set
         $user_id = $this->createUser()->id;
@@ -55,7 +55,7 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testDeleteUserTest()
+    public function testDeleteUser()
     {
         // Set
         $user_id = $this->createUser()->id;
@@ -70,7 +70,7 @@ class UserTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testSearchUserTest()
+    public function testSearchUser()
     {
         // Set
         $cpf = $this->createUser()->cpf;

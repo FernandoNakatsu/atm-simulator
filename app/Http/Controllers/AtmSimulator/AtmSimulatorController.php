@@ -38,7 +38,7 @@ class AtmSimulatorController extends Controller
             DB::rollBack();
             return response()->json(["errors" => ["Account Bank not found."]], 404);
         } else {
-            if ($request->withdraw_value > $accountBank->balance) {
+            if ($request->value > $accountBank->balance) {
                 // Roll back the transaction
                 DB::rollBack();
                 return response()->json(["errors" => ["Insufficient balance to make the desired withdrawal."]], 403);

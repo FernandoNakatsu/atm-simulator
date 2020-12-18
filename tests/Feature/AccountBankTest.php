@@ -13,7 +13,7 @@ class AccountBankTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreateAccountBankType1Test()
+    public function testCreateAccountBankType1()
     {
         // Set
         $user_id = $this->createUser()->id;
@@ -33,7 +33,7 @@ class AccountBankTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testCreateAccountBankType2Test()
+    public function testCreateAccountBankType2()
     {
         // Set
         $user_id = $this->createUser()->id;
@@ -53,7 +53,7 @@ class AccountBankTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testCreateAccountBankAlreadyExistsTest()
+    public function testCreateAccountBankAlreadyExists()
     {
         // Set
         $user = $this->createUserWithAccountsBank();
@@ -73,7 +73,7 @@ class AccountBankTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testCreateAccountBankWithoutTypeIdTest()
+    public function testCreateAccountBankWithoutTypeId()
     {
         // Set
         $data = ["user_id" => 1];
@@ -89,7 +89,7 @@ class AccountBankTest extends TestCase
         $this->assertEquals(json_encode($responseBody), $response->getContent());
     }
 
-    public function testCreateAccountBankWithoutUserIdTest()
+    public function testCreateAccountBankWithoutUserId()
     {
         // Set
         $data = ["account_bank_type_id" => 1];

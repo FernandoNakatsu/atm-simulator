@@ -290,7 +290,7 @@ paths:
             format: value
             example: '"value": 1000'
       requestBody:
-        description: Deposit fields
+        description: Withdraw fields
         required: true
         content:
           application/json:
@@ -548,7 +548,7 @@ components:
                 ]
               }
       AtmSimulatorDepositError422:
-        description: Required fields error. / Deposit value must be at least 1. / The bank_type_id is not between 1 and 2.
+        description: Required fields error. / Deposit value must be at least 1. / The bank_type_id is not between 1 and 2. / Deposit value must be an integer.
         content:
           application/json:
             schema:
@@ -560,7 +560,8 @@ components:
                   "The user id field is required.",
                   "The value field is required.",
                   "The value must be at least 1.",
-                  "The account bank type id must be between 1 and 2."
+                  "The account bank type id must be between 1 and 2.",
+                  "The value must be an integer.",
                 ]
               }
     general:
