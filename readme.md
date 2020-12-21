@@ -31,11 +31,15 @@ As tecnologias utilizados nesse projeto foram:
 
 ## Começando
 
-- Clone este repositório.
+Na sua máquina, você só precisa ter o [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), o [Docker](https://www.docker.com/get-started) e o [Docker Compose](https://docs.docker.com/compose/) instalados.
+
+- Clone este repositório rodando o comando abaixo:
+```bash
+git clone https://github.com/FernandoNakatsu/atm-simulator.git atm-simulator
+```
 - Crie um arquivo **.env** na raíz do projeto.
 - Copie todo conteúdo do arquivo **.env.example** no arquivo **.env** criado.
 
-Na sua máquina, você só precisa ter o [Docker](https://www.docker.com/get-started) e o [Docker Compose](https://docs.docker.com/compose/) instalados.
 Você pode subir o projeto utilizando o `docker-compose`.
 Garanta que a porta `8080` de sua máquina não esteja sendo utilizada e rode o comando abaixo:
 
